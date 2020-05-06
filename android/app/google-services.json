@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "661580999473",
+    "firebase_url": "https://uuidstore.firebaseio.com",
+    "project_id": "uuidstore",
+    "storage_bucket": "uuidstore.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661580999473:android:3ac7a21674b222dfc91e10",
+        "android_client_info": {
+          "package_name": "com.aditya.uuidtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661580999473-la6ges1u6p2thg01hoorusrupgc9mr43.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAToqU8AsPe2hyp_w2X3Iq5jnxIPJ29r3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661580999473-la6ges1u6p2thg01hoorusrupgc9mr43.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

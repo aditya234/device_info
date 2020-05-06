@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uuidtest/device_service.dart';
+import 'package:uuidtest/firestore_service.dart';
+import 'package:uuidtest/previous_devices.dart';
 
 class GetDeviceInfo extends StatefulWidget {
   @override
@@ -8,52 +10,70 @@ class GetDeviceInfo extends StatefulWidget {
 
 class _GetDeviceInfoState extends State<GetDeviceInfo> {
   Map<String, String> deviceData = {};
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          (deviceData.isNotEmpty)
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Table(
-                    border: TableBorder.all(
-                      color: Colors.grey,
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                (deviceData.isNotEmpty)
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Table(
+                          border: TableBorder.all(
+                            color: Colors.grey,
+                          ),
+                          children: _getTableRows(),
+                        ),
+                      )
+                    : SizedBox(),
+                InkWell(
+                  onTap: () async {
+                    if (!isLoading) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      deviceData['device_id'] = await DeviceService().deviceId;
+                      final androidDeviceInfo =
+                          await DeviceService().deviceModel;
+                      deviceData['device_model'] = androidDeviceInfo.model;
+                      deviceData['datetime'] = DateTime.now().toString();
+                      await FirestoreService().createRecord(deviceData);
+                      setState(() {
+                        isLoading = false;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(40),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    children: _getTableRows(),
+                    child: Text(
+                      'Fetch Device Details',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                 )
-              : SizedBox(),
-          InkWell(
-            onTap: () async {
-              deviceData['id'] = await DeviceService().deviceId;
-              deviceData['model'] = await DeviceService().deviceModel;
-              deviceData['datetime'] = DateTime.now().toString();
-              setState(() {});
-            },
-            child: Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.all(40),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text(
-                'Fetch Device Details',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
+              ],
             ),
-          )
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PreviousDevices()));
+        },
         child: Icon(Icons.show_chart),
       ),
     );
@@ -61,8 +81,8 @@ class _GetDeviceInfoState extends State<GetDeviceInfo> {
 
   _getTableRows() {
     List<TableRow> tableRows = [];
-    tableRows.add(_createTableRow('Device Id', deviceData['id']));
-    tableRows.add(_createTableRow('Device Model', deviceData['model']));
+    tableRows.add(_createTableRow('Device Id', deviceData['device_id']));
+    tableRows.add(_createTableRow('Device Model', deviceData['device_model']));
     tableRows.add(_createTableRow('DateTime', deviceData['datetime']));
     return tableRows;
   }

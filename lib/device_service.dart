@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:flutter_udid/flutter_udid.dart';
 
@@ -16,14 +14,8 @@ class DeviceService {
     return udid;
   }
 
-  Future<String> get deviceModel async {
-    if (Platform.isIOS) {
-      IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
-      return iosDeviceInfo.model;
-    } else {
-      AndroidDeviceInfo androidDeviceInfo =
-          await DeviceInfoPlugin().androidInfo;
-      return androidDeviceInfo.model;
-    }
+  Future<AndroidDeviceInfo> get deviceModel async {
+    AndroidDeviceInfo androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
+    return androidDeviceInfo;
   }
 }
