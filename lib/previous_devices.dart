@@ -8,20 +8,32 @@ class PreviousDevices extends StatefulWidget {
 
 class _PreviousDevicesState extends State<PreviousDevices> {
   List<Map> devices = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    FirestoreService().getRecords();
+    FirestoreService().getRecords().then((deviceList) {
+      isLoading = false;
+      setState(() {
+        devices = deviceList;
+      });
+    }).catchError((err) {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: ListView(
-        children: _getDeviceInfoTables(),
-      ),
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
+              children: _getDeviceInfoTables(),
+            ),
     );
   }
 
@@ -29,7 +41,7 @@ class _PreviousDevicesState extends State<PreviousDevices> {
     List<Widget> deviceInfoTables = [];
     devices.forEach((device) {
       deviceInfoTables.add(Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
         child: Table(
           border: TableBorder.all(
             color: Colors.grey,
